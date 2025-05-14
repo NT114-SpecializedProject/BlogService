@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: BlogService
+  datasource:
+    url: jdbc:mysql://mysql-container:3306/blog_microservice
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+server:
+  port: 8082
