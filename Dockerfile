@@ -16,7 +16,7 @@ COPY src ./src
 RUN mvn clean package -DskipTests
 
 # Use Java 21 slim runtime image
-FROM eclipse-temurin:21-jdk-jammy as runtime
+FROM eclipse-temurin:21-jdk-jammy AS runtime
 
 WORKDIR /app
 

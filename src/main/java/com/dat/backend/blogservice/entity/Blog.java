@@ -26,6 +26,8 @@ public class Blog {
     private String content;
     private Long authorId;
 
+    private int likeCount;
+
     @CreationTimestamp
     private LocalDateTime created;
 }

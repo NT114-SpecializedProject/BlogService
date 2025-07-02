@@ -29,4 +29,19 @@ public class BlogController {
     public ResponseEntity<BlogResponse> getBlogById(@PathVariable Long id) {
         return ResponseEntity.ok(blogService.getBlogById(id));
     }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> deleteBlog(@PathVariable Long id) {
+        return ResponseEntity.ok(blogService.deleteBlog(id));
+    }
+
+    @PostMapping("/like/{id}/decrease")
+    public ResponseEntity<String> likeBlog(@PathVariable Long id) {
+        return ResponseEntity.ok(blogService.decreaseLike(id));
+    }
+
+    @PostMapping("/like/{id}/increase")
+    public ResponseEntity<String> unlikeBlog(@PathVariable Long id) {
+        return ResponseEntity.ok(blogService.increaseLike(id));
+    }
 }

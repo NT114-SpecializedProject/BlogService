@@ -15,6 +15,7 @@ public class BlogResponse {
     private Long id;
     private String title;
     private String content;
+    private int likeCount;
     private Long authorId;
     private LocalDateTime createdAt;
 }
