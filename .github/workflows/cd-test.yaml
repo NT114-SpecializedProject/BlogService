@@ -1,0 +1,66 @@
+name: Test environment deployment
+
+on:
+  push:
+    branches-ignore: ["main", "test", "staging"]
+    paths:
+      - "src/main/java/**"
+      - "src/main/resources/**"
+      - "pom.xml"
+      - "Dockerfile"
+  pull_request:
+    branches: ["main", "test", "staging"]
+    paths:
+      - "src/main/java/**"
+      - "src/main/resources/**"
+      - "pom.xml"
+      - "Dockerfile"
+
+
+jobs:
+
+
+  Build-image:
+    runs-on: ubuntu-latest
+    steps:
+      -
+        name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      -
+        name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      -
+        name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          push: true
+          tags: datnguyen10102004/blog-service:test-${{ github.sha }}
+
+  Update-manifest:
+    runs-on: ubuntu-latest
+    needs: Build-image
+    if: ${{ success() }}
+    steps:
+      -
+        name: Checkout infrastructure repo
+        uses: actions/checkout@v3
+        with:
+          repository: NT114-SpecializedProject/infrastructures
+          ref: 'main'
+          token: ${{ secrets.GIT_TOKEN }}
+      -
+        name: Update user service manifest
+        run: |
+          git config --global user.email "datnguyen101004@gmail.com"
+          git config --global user.name "datnguyen101004"
+          sed -i 's#datnguyen10102004/blog-service:[^[:space:]]*#datnguyen10102004/blog-service:test-${{ github.sha }}#' ./test/microservices/blog-service/blog-service-deploy.yaml
+          git add ./test/microservices/blog-service/blog-service-deploy.yaml
+          if ! git diff --cached --quiet; then
+            git commit -m "Update blog-service version to test-${{ github.sha }} in test environment"
+            git push origin main
+          else
+            echo "No changes to commit."
+          fi
