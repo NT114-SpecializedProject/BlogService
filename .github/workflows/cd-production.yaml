@@ -1,8 +1,8 @@
-name: Test environment deployment
+name: Production environment deployment
 
 on:
   pull_request:
-    branches: ["test"]
+    branches: ["main"]
     paths:
       - "src/main/java/**"
       - "src/main/resources/**"
@@ -30,7 +30,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           push: true
-          tags: datnguyen10102004/blog-service:test-${{ github.sha }}
+          tags: datnguyen10102004/blog-service:prod-${{ github.sha }}
 
   Update-manifest:
     runs-on: ubuntu-latest
@@ -49,10 +49,10 @@ jobs:
         run: |
           git config --global user.email "datnguyen101004@gmail.com"
           git config --global user.name "datnguyen101004"
-          sed -i 's#datnguyen10102004/blog-service:[^[:space:]]*#datnguyen10102004/blog-service:test-${{ github.sha }}#' ./test/microservices/blog-service/blog-service-deploy.yaml
+          sed -i 's#datnguyen10102004/blog-service:[^[:space:]]*#datnguyen10102004/blog-service:prod-${{ github.sha }}#' ./production/microservices/blog-service/blog-service-deploy.yaml
           git add ./test/microservices/blog-service/blog-service-deploy.yaml
           if ! git diff --cached --quiet; then
-            git commit -m "Update blog-service version to test-${{ github.sha }} in test environment"
+            git commit -m "Update blog-service version to prod-${{ github.sha }} in production environment"
             git push origin main
           else
             echo "No changes to commit."
